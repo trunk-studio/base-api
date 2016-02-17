@@ -1,0 +1,96 @@
+debug:
+  container_name: sailsSample_debug
+  image: node:4
+  command: "/bin/bash -l"
+
+  working_dir: /sailsSample
+  volumes:
+    - ./:/sailsSample
+  ports:
+    - "1337:1337"
+
+
+buildDev:
+  container_name: sailsSample_buildDev
+  image: node:4
+  command: "/bin/bash -l -c 'npm i && npm run build'"
+
+  working_dir: /sailsSample
+  volumes:
+    - ./:/sailsSample
+
+buildProd:
+  container_name: sailsSample_buildProd
+  image: node:4
+  command: "/bin/bash -l -c 'npm i && npm run prod'"
+
+  working_dir: /sailsSample
+  volumes:
+    - ./:/sailsSample
+
+test:
+  container_name: sailsSample_test
+  image: node:4
+  command: "/bin/bash -l -c 'npm run test'"
+
+  working_dir: /sailsSample
+  volumes:
+    - ./:/sailsSample
+
+dev:
+  container_name: sailsSample_dev
+  image: node:4
+  command: "/bin/bash -l -c 'npm start'"
+  environment:
+    PORT: "1337"
+    NODE_ENV: "development"
+    DOMAIN_HOST: "localhost:1337"
+
+  ports:
+    - "1337:1337"
+
+  working_dir: /sailsSample
+  volumes:
+    - ./:/sailsSample
+  external_links:
+    - mysql
+
+  restart: always
+
+prod:
+  container_name: sailsSample_prod
+  image: node:4
+  command: "/bin/bash -l -c 'npm run build-prod && npm run start-prod'"
+  environment:
+    PORT: "1337"
+    NODE_ENV: "development"
+    DOMAIN_HOST: "localhost:1337"
+
+  ports:
+    - "1337:1337"
+
+  working_dir: /sailsSample
+  volumes:
+    - ./:/sailsSample
+  external_links:
+    - mysql
+
+  restart: always
+
+mysql:
+  container_name: mysql
+  image: dgraziotin/mysql
+
+  ports:
+    - "3306:3306"
+  environment:
+    MYSQL_ADMIN_PASS: "root"
+    MYSQL_USER_NAME: "nodejsSample"
+    MYSQL_USER_DB: "nodejsSample"
+    MYSQL_USER_PASS: "nodejsSample"
+    CREATE_MYSQL_BASIC_USER_AND_DB: "true"
+
+  volumes:
+    - ../database:/var/lib/mysql/
+
+  restart: always
